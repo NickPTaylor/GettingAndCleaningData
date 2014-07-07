@@ -1,0 +1,45 @@
+Getting Data
+============
+
+These four items should exist:
+1. The raw data
+2. The tidy data
+3. A code book describing each variable in the tidy data set
+4. An explicit and exact recipe for the above.
+
+Tidy data is:
+1. Variables recorded in a column
+2. Observations recorded in rows
+3. One table for each kind of variable
+4. If multiple tables exist, a column for mapping (e.g. ID column)
+
+### Example
+
+This is an example of a recipe for getting data.  The recipe looks up the data from the internet and then makes a local copy.  It is important to record when the copy was made.  The raw data is then tabulated ready for further processing.
+
+```{r}
+get.data = function(file.url, file.name, reload = FALSE){
+    
+    if(!file.exists("data")){
+        dir.create("./data")
+    }
+    
+    write.path = paste(c("./data/", file.name, ".txt"), collapse = "")
+    if(!file.exists(write.path) | reload){
+        download.file(url = file.url, destfile = write.path)
+    }
+}
+
+get.data("http://www.metoffice.gov.uk/climate/uk/datasets/Sunshine/date/UK.txt",
+         "rainfall",
+         reload = TRUE)
+
+date.downloaded <- date()
+print(date.downloaded)
+
+rain.fall <- read.table("./data/rainfall.txt", skip = 7, 
+                        header = TRUE, fill = TRUE)
+rain.fall <- rain.fall[-nrow(rain.fall), ]
+print(head(rain.fall))
+```
+
