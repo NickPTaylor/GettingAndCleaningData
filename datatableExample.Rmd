@@ -1,0 +1,73 @@
+The data.table Command
+======================
+
+```{r}
+library(data.table)
+```
+
+A data.frame is created like this:
+```{r}
+set.seed(0)
+df = data.frame(x = rnorm(9), y = rep(letters[1:3], each = 3), z = rnorm(9))
+print(df)
+```
+
+A data.table is created in an identical fashion:
+```{r}
+set.seed(0)
+dt <- data.table(x = rnorm(9), y = rep(letters[1:3], each = 3), z = rnorm(9))
+print(df)
+```
+
+### Subsetting
+
+Here are some subsetting examples (same as with data.tables):
+```{r}
+dt[2, ]
+dt[dt$y == "a", ]
+dt[c(2, 3), ]
+```
+
+### Expression
+
+Trying to subset on columns in data tables is **not** the same as with data frames!  We actually specifying expressions rather than subset indices.  For example, if you specify a list, that list of functions will be performed:
+```{r}
+    dt[, list(mean(x), sum(z))]
+```
+
+### New Columns
+This can be done using a colon:
+```{r}
+    dt[, w:=z^2]
+    dt[, m := {tmp <- (x + z); log2(tmp + 5)}]
+    dt[, a := x > 0]
+```
+
+### Speedy Operations
+This is very quick
+```{r}
+    set.seed(123)
+    dt <- data.table(x = sample(letters[1:3], 1e5, TRUE))
+    dt[, .N, by = x]
+```
+
+### Setting Keys
+Keys can be set like this
+```{r}
+    dt <- data.table(x = rep(letters[1:3], each = 100), y = rnorm(300))
+    dt[dt$x == 'a']
+    setkey(dt, x)
+    dt['a']
+```
+
+### Merging Data
+Here is an example of data merging.  Merging forms a merged table based on common keys.  This is faster than data.tables
+```{r}
+    DT1 <- data.table(x = c('a', 'a', 'b', 'dt1'), y=1:4)
+    DT2 <- data.table(x = c('a', 'b', 'b', 'dt2'), z = 5:8)
+    setkey(DT1, x); setkey(DT2, x)
+    merge(DT1, DT2)
+```
+
+### Reading/writing
+Also, it is much faster to read and write to data.tables then data.frames.  it is well worth looking into this.
