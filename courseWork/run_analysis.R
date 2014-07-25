@@ -132,11 +132,13 @@ my.data <- arrange(rbind(test.data, train.data), ID)
 # and we also need 'ID', 'activity' and 'set'
 p <- "mean[^F]|std"             
 extract <- grep(p , names(my.data), value = TRUE) 
-extract <- c("ID", "activity", "set", extract)
-my.data <- my.data[, extract]
+my.data <- my.data[, c("ID", "activity", extract)]
 
 # REQUIREMENT 3: Descriptive activity names
 # set levels as per activity.code
 levels(my.data$activity) <- activity.code$activity.code
 
 # REQUIREMENT 5: Average each variable by activity and subject 
+temp1 <- ddply(my.data, .(ID, activity), numcolwise(mean))
+temp2 <- split(my.data, list(my.data$ID, my.data$activity))
+print(mean(temp[[1]][,3]))
