@@ -79,7 +79,7 @@ read.data <- function(set, code){
         ID <- read.table(file = 
                 paste(c(my.dir, sprintf("subject_%s.txt", set)), collapse = "/"),
                 col.names = "ID",
-                colClasses = ("ID" = "factor"))
+                colClasses = ("ID" = "integer"))
         activity <- read.table(file = 
                 paste(c(my.dir, sprintf("y_%s.txt", set)), collapse = "/"),
                 col.names = "activity",
@@ -101,6 +101,8 @@ read.data <- function(set, code){
 # Function:     Main Program
 #
 ################################################################################
+library(plyr)
+library(reshape)
 
 # initial set-up
 setwd("/home/nick/Desktop/NewDocs/Github/GettingAndCleaningData/courseWork")
@@ -123,7 +125,7 @@ if(!all(sapply(check.names, exists))){
 }
 
 # REQUIREMENT 1: Merge data
-my.data <- rbind(test.data, train.data)
+my.data <- arrange(rbind(test.data, train.data), ID)
 
 # REQUIREMENT 2: Extract data
 # extract column names for mean and std but NOT meanFreq using grep
@@ -137,3 +139,4 @@ my.data <- my.data[, extract]
 # set levels as per activity.code
 levels(my.data$activity) <- activity.code$activity.code
 
+# REQUIREMENT 5: Average each variable by activity and subject 
