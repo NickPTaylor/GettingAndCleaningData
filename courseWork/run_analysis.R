@@ -116,3 +116,9 @@ if(!all(sapply(check.names, exists))){
         test.data <- read.data("test")
         train.data <- read.data("train")  
 }
+
+# merge data
+my.data <- rbind(test.data, train.data)
+
+temp <- my.data[ , grepl("mean[^F]|std" , names(my.data))] 
+# use sql query for mena
