@@ -12,17 +12,17 @@
 #                       http://archive.ics.uci.edu/ml/datasets/
 #                               Human+Activity+Recognition+Using+Smartphones
 #
-#               The coursework set the following tasks:
+#               The coursework set the following requirement:
 #       
-#                       * Merges the training and the test sets to create one 
+#                       1. Merges the training and the test sets to create one 
 #                       data set.
-#                       * Extracts only the measurements on the mean and 
+#                       2. Extracts only the measurements on the mean and 
 #                       standard deviation for each measurement. 
-#                       * Uses descriptive activity names to name the activities 
+#                       3. Uses descriptive activity names to name the activities 
 #                       in the data set.
-#                       * Appropriately labels the data set with descriptive 
+#                       4. Appropriately labels the data set with descriptive 
 #                       variable names.
-#                       * Creates a second, independent tidy data set with the 
+#                       5. Creates a second, independent tidy data set with the 
 #                       average of each variable for each activity and each 
 #                       subject.
 #
@@ -56,6 +56,7 @@ get.data <- function(){
 # Function:     read.data
 # Purpose:      Read the data into data.frames
 # INPUT:        <character> set :- read "train" or "test" set 
+#               <data.frame> code :- names for measured data
 # OUTPUT:       <data.frame> my.data :- data
 # Description   The reads the test and training data.  The function uses C
 #               formatting to create the file name basd on whether it is 
@@ -66,11 +67,15 @@ get.data <- function(){
 #               data frame.
 #
 ################################################################################
-read.data <- function(set){
+read.data <- function(set, code){
     
         my.dir = paste(c(".", "data", "UCI HAR Dataset", set), collapse = "/")
     
         # read data items
+        # REQUIREMENT 4: Appropriate data names
+        # data is named appropriately from the outset
+        # note that the measured.code gives the names for the 'measured' data
+        
         ID <- read.table(file = 
                 paste(c(my.dir, sprintf("subject_%s.txt", set)), collapse = "/"),
                 col.names = "ID",
@@ -81,7 +86,7 @@ read.data <- function(set){
                 colClasses = c("activity" = "factor"))
         measured <- read.table(file = 
                 paste(c(my.dir, sprintf("X_%s.txt", set)), collapse = "/"),
-                col.names = measured.code$measured.code)
+                col.names = code$measured.code)
         set <- data.frame(set = rep(set, dim(ID)[1]))
     
         # bind data
@@ -113,12 +118,22 @@ if(!all(sapply(check.names, exists))){
         activity.code <- read.table(
                 paste(c(data.dir, "activity_labels.txt"), collapse = "/"), 
                 col.names = c("", "activity.code"))
-        test.data <- read.data("test")
-        train.data <- read.data("train")  
+        test.data <- read.data("test", measured.code)
+        train.data <- read.data("train", measured.code)  
 }
 
-# merge data
+# REQUIREMENT 1: Merge data
 my.data <- rbind(test.data, train.data)
 
-temp <- my.data[ , grepl("mean[^F]|std" , names(my.data))] 
-# use sql query for mena
+# REQUIREMENT 2: Extract data
+# extract column names for mean and std but NOT meanFreq using grep
+# and we also need 'ID', 'activity' and 'set'
+p <- "mean[^F]|std"             
+extract <- grep(p , names(my.data), value = TRUE) 
+extract <- c("ID", "activity", "set", extract)
+my.data <- my.data[, extract]
+
+# REQUIREMENT 3: Descriptive activity names
+# set levels as per activity.code
+levels(my.data$activity) <- activity.code$activity.code
+
