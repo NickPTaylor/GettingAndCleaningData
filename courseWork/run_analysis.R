@@ -46,7 +46,7 @@ get.data <- function(){
                 "getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", sep = "")
         td <- tempdir()
         tf <- tempfile(tmpdir = td, fileext=".zip")
-        download.file(my.url, tf, method = "curl")
+        download.file(data.url, tf, method = "curl")
         unzip(tf, exdir = "./data", overwrite = TRUE)
         unlink(tf) 
 }
@@ -102,9 +102,8 @@ read.data <- function(set, code){
 #
 ################################################################################
 library(plyr)
-library(reshape)
 
-# initial set-up
+# initial set-upS
 setwd("/home/nick/Desktop/NewDocs/Github/GettingAndCleaningData/courseWork")
 data.dir <- "./data/UCI HAR Dataset"
 
@@ -125,20 +124,20 @@ if(!all(sapply(check.names, exists))){
 }
 
 # REQUIREMENT 1: Merge data
-my.data <- arrange(rbind(test.data, train.data), ID)
+my.data.1 <- arrange(rbind(test.data, train.data), ID)
 
 # REQUIREMENT 2: Extract data
 # extract column names for mean and std but NOT meanFreq using grep
 # and we also need 'ID', 'activity' and 'set'
 p <- "mean[^F]|std"             
-extract <- grep(p , names(my.data), value = TRUE) 
-my.data <- my.data[, c("ID", "activity", extract)]
+extract <- grep(p , names(my.data.1), value = TRUE) 
+my.data.1 <- my.data.1[, c("ID", "activity", "set", extract)]
 
 # REQUIREMENT 3: Descriptive activity names
 # set levels as per activity.code
-levels(my.data$activity) <- activity.code$activity.code
+levels(my.data.1$activity) <- activity.code$activity.code
 
 # REQUIREMENT 5: Average each variable by activity and subject 
-temp1 <- ddply(my.data, .(ID, activity), numcolwise(mean))
-temp2 <- split(my.data, list(my.data$ID, my.data$activity))
-print(mean(temp[[1]][,3]))
+my.data.2 <- ddply(my.data.1, .(ID, activity), transform, 
+        {set = set; numcolwise(mean)})
+write.csv(my.data.2, file = "data.csv")
