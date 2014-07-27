@@ -45,7 +45,7 @@ get.data <- function(){
         data.url <- paste("http://d396qusza40orc.cloudfront.net/", 
                 "getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", sep = "")
         td <- tempdir()
-        tf <- tempfile(tmpdir = td, fileext=".zip")
+        tf <- tempfile(tmpdir = td, fileext = ".zip")
         download.file(data.url, tf, method = "curl")
         unzip(tf, exdir = "./data", overwrite = TRUE)
         unlink(tf) 
@@ -138,6 +138,5 @@ my.data.1 <- my.data.1[, c("ID", "activity", "set", extract)]
 levels(my.data.1$activity) <- activity.code$activity.code
 
 # REQUIREMENT 5: Average each variable by activity and subject 
-my.data.2 <- ddply(my.data.1, .(ID, activity), transform, 
-        {set = set; numcolwise(mean)})
+my.data.2 <- ddply(my.data.1, .(ID, activity, set), {numcolwise(mean)})
 write.csv(my.data.2, file = "data.csv")

@@ -1,4 +1,4 @@
-### Code book
+### Introduction
 This code book is derived from the data available from [here](
 https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip).  Refer to ```features_info.txt``` and ```features.txt``` in the data set for full background detail. 
 
@@ -23,7 +23,7 @@ Here is an example:
                 Units: m/s^2
                 Time domain mean body acceleration along the x axis averaged (mean) for each ID and activity grouping.
 
-<!-- -->
+### Code Book
 
         ID
                 Case (person) ID
