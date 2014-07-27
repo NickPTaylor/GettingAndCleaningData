@@ -100,10 +100,9 @@ where ```activity.code``` was previously read in from the file stated above.
 ### Averaging Variable by ID and Activity
 This is achieved with line of code:
 ```
-my.data.2 <- ddply(my.data.1, .(ID, activity), transform, 
-        {set = set; numcolwise(mean)})
+my.data.2 <- ddply(my.data.1, .(ID, activity, set), {numcolwise(mean)})
 ```
-This splits the data by 'ID' and 'activity' and then averages each column of numerical data.  Also, the variable 'set' is retained for future reference.
+This splits the data by 'ID' and 'activity' and then averages each column of numerical data.  Also, the variable 'set' is retained for future reference - this has no effect on the groupings.
 
 Since I am not familiar with the ```ddply``` function, I performed a quick test to confirm that correct operation was being performed.  The operation can be performed using and alternative approach: 
 ```
